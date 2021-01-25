@@ -4,7 +4,29 @@ import Options.Applicative
 import Data.Semigroup ((<>))
 
 main :: IO ()
-main = greet =<< execParser opts
+main = do src <- execParser opts
+          putStrLn $ "Compiling " ++ src
+  where 
+    opts :: ParserInfo String
+    opts = info (helper <*> parser) (fullDesc <> progDesc "Compiler SRC into executable TARGET" <> header "jsc - a JavaScript to x86 compiler")
+
+    parser :: Parser String 
+    parser = argument str (metavar "SRC" <> help "JavaScript source") 
+
+
+
+
+
+
+
+
+
+
+
+-- greet example
+
+greetMain :: IO ()
+greetMain = greet =<< execParser opts
   where
     opts = info (helper <*> sample)
       ( fullDesc
