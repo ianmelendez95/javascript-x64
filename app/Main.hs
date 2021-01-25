@@ -7,7 +7,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 
-import JavaScript (parseJS)
+import JavaScript (parseJS, compile)
 
 main :: IO ()
 main = do src <- execParser opts
@@ -21,7 +21,8 @@ main = do src <- execParser opts
 
 compileSrc :: String -> IO ()
 compileSrc src = do contents <- TIO.readFile src
-                    print $ parseJS src contents
+                    let parsed = parseJS src contents
+                    putStrLn $ unlines $ compile parsed
 
 ---- greet example
 

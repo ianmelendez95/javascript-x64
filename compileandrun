@@ -1,0 +1,10 @@
+#!/usr/bin/zsh
+
+JSFILE=${1:a}
+ASMFILE=${JSFILE:r}.asm
+
+stack build \
+  && stack exec jsc -- "${JSFILE}" > "${ASMFILE}" \
+  && nasm -felf64 "${ASMFILE}" \
+  && ld "${ASMFILE:r}.o" -o "${ASMFILE:r}" \
+  && "${ASMFILE:r}"

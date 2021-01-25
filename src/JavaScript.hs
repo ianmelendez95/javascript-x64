@@ -14,6 +14,24 @@ type Parser = Parsec Void Text
 
 data JS = JConsoleLog String deriving (Show)
 
+compile :: JS -> [String]
+compile (JConsoleLog str) = 
+  [ "          global _start"
+  , ""
+  , "          section   .text"
+  , "_start:   mov       rax, 1"
+  , "          mov       rdi, 1"
+  , "          mov       rsi, message"
+  , "          mov       rdx, " ++ show (length str + 1)
+  , "          syscall"
+  , "          mov       rax, 60"
+  , "          xor       rdi, rdi"
+  , "          syscall"
+  , ""
+  , "          section   .data"
+  , "message:  db        \"" ++ str ++ "\", 10" 
+  ]
+
 parseJS :: FilePath -> Text -> JS
 parseJS fileName content = case parse pConsoleLog fileName content of 
                             (Left err) -> error $ errorBundlePretty err
