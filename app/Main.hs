@@ -3,9 +3,15 @@ module Main where
 import Options.Applicative
 import Data.Semigroup ((<>))
 
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+import JavaScript (parseJS)
+
 main :: IO ()
 main = do src <- execParser opts
-          putStrLn $ "Compiling " ++ src
+          compileSrc src
   where 
     opts :: ParserInfo String
     opts = info (helper <*> parser) (fullDesc <> progDesc "Compiler SRC into executable TARGET" <> header "jsc - a JavaScript to x86 compiler")
@@ -13,17 +19,11 @@ main = do src <- execParser opts
     parser :: Parser String 
     parser = argument str (metavar "SRC" <> help "JavaScript source") 
 
+compileSrc :: String -> IO ()
+compileSrc src = do contents <- TIO.readFile src
+                    print $ parseJS src contents
 
-
-
-
-
-
-
-
-
-
--- greet example
+---- greet example
 
 greetMain :: IO ()
 greetMain = greet =<< execParser opts
