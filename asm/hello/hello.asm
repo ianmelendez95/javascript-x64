@@ -4,7 +4,6 @@ global _start  ; must be declared for linker (ld)
 _start:   mov       rax, 1                ; system call for write
           mov       rdi, 1                ; file handle 1 is stdout
           mov       rsi, message          ; address of string to output
-          add       rsi, 0
           mov       rdx, 13               ; number of bytes
           syscall                         ; invoke operating system to do the write
           mov       rax, 60               ; system call for exit
