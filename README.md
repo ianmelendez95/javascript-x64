@@ -1,2 +1,1 @@
-# javascript-x64
-# javascript-x64
+# just-enough-javascript
