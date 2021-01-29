@@ -27,6 +27,7 @@ library:
   dependencies: 
     - text
     - megaparsec
+    - parser-combinators
 
 executables:
   hjs:

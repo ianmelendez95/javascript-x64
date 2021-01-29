@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4cd90d90a37241d82a0b14bab365e24038d766ed3744b86ea840ea634c0284b1
+-- hash: a49053391dcec1b0c0035ac66c5177481bfee6adc1a521c43f79898800802448
 
 name:           javascript-x64
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      JS.Parser
       JS.Syntax
   other-modules:
       Paths_javascript_x64
@@ -35,6 +36,7 @@ library
   build-depends:
       base >=4.7 && <5
     , megaparsec
+    , parser-combinators
     , text
   default-language: Haskell2010
 
