@@ -29,7 +29,7 @@ library:
     - megaparsec
 
 executables:
-  jsc:
+  hjs:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -38,7 +38,7 @@ executables:
       - -with-rtsopts=-N
     dependencies:
       - javascript-x64
-      - optparse-applicative
+      - haskeline
       - text
       - megaparsec
 
