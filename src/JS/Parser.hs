@@ -23,6 +23,7 @@ expr = makeExprParser term operatorTable
 term :: Parser Expr
 term = choice
   [ parens expr
+  , forLoop
   , variable
   , stringLiteral
   , number
@@ -40,6 +41,13 @@ operatorTable =
     prefix  name f = Prefix  (f <$ symbol name)
     postfix name f = Postfix (f <$ symbol name)
 
+forLoop :: Parser Expr
+forLoop = do (e1, e2, e3) <- symbol "for" *> forTerms 
+             For e1 e2 e3 <$> braces (many $ lexeme expr) 
+  where 
+    forTerms :: Parser (Expr, Expr, Expr)
+    forTerms = lexeme $ parens $ (,,) <$> lexeme expr <*> (symbol ";" *> lexeme expr) <*> (symbol ";" *> lexeme expr)
+
 stringLiteral :: Parser Expr
 stringLiteral = Str <$> lexeme (char '"' >> manyTill L.charLiteral (char '"'))
 
@@ -54,6 +62,9 @@ identifier = (:) <$> letterChar <*> many (alphaNumChar <|> char '_')
 
 parens :: Parser a -> Parser a
 parens = between (symbol "(") (symbol ")")
+
+braces :: Parser a -> Parser a
+braces = between (symbol "{") (symbol "}")
 
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme sc
