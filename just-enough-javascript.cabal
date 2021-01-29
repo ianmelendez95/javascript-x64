@@ -4,13 +4,13 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6c6fd810518096517f43cae20f33ad409e96c71c321ef97b91c1e5286794e81c
+-- hash: 3f23a522feba741906d5e7c148b909350facd6602a3bb3230f8a1dcf0e6be431
 
-name:           javascript-x64
+name:           just-enough-javascript
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/javascript-x64#readme>
-homepage:       https://github.com/githubuser/javascript-x64#readme
-bug-reports:    https://github.com/githubuser/javascript-x64/issues
+description:    Please see the README on GitHub at <https://github.com/githubuser/just-enough-javascript#readme>
+homepage:       https://github.com/githubuser/just-enough-javascript#readme
+bug-reports:    https://github.com/githubuser/just-enough-javascript/issues
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2021 Author name here
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/javascript-x64
+  location: https://github.com/githubuser/just-enough-javascript
 
 library
   exposed-modules:
@@ -33,7 +33,7 @@ library
       JS.Syntax
       JS.Value
   other-modules:
-      Paths_javascript_x64
+      Paths_just_enough_javascript
   hs-source-dirs:
       src
   build-depends:
@@ -48,31 +48,31 @@ library
     , vector
   default-language: Haskell2010
 
-executable hjs
+executable js
   main-is: Main.hs
   other-modules:
-      Paths_javascript_x64
+      Paths_just_enough_javascript
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , haskeline
-    , javascript-x64
+    , just-enough-javascript
     , megaparsec
     , mtl
     , text
   default-language: Haskell2010
 
-test-suite javascript-x64-test
+test-suite just-enough-javascript-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_javascript_x64
+      Paths_just_enough_javascript
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , javascript-x64
+    , just-enough-javascript
   default-language: Haskell2010
