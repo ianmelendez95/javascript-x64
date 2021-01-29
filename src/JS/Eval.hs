@@ -3,7 +3,7 @@ module JS.Eval where
 import Control.Monad.State.Lazy
 import Control.Monad.Except
 import Control.Monad
-import Text.Read
+import Text.Read hiding (lift)
 import Data.Maybe
 
 import qualified JS.Syntax as S
@@ -32,6 +32,7 @@ eval (S.For init check update body) = for init check update body
 for :: S.Expr -> S.Expr -> S.Expr -> [S.Expr] -> R.RunState V.Value
 for init check update body = 
   do eval init
+     liftIO $ putStrLn "Evaling for"
      cont <- truthy <$> eval check
      if not cont then return V.Undefined
                  else loop >> return V.Undefined 
@@ -50,7 +51,7 @@ assign :: S.Expr -> S.Expr -> R.RunState V.Value
 assign (S.Var name) val = 
   do newVal <- eval val
      R.assign name newVal
-assign expr _ = error $ "Assigning to non variable: " ++ show expr
+assign var val = lift $ throwError $ R.SyntaxError $ "Invalid left-hand side expression in postfix operation: " ++ show (S.Assign var val)
 
 ---------------
 -- Value Ops --

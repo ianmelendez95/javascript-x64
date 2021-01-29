@@ -35,7 +35,14 @@ instance A.ToJSON Value where
   toJSON Null         = A.Null
 
 instance Show Value where 
-  show = show . A.encode
+  show (Num x)      = show x
+  show NaN          = "NaN"
+  show (Bl b)       = show b
+  show (Str s)      = s
+  show (Object map) = show $ A.toJSON map
+  show (Array vect) = show vect
+  show Undefined    = "undefined"
+  show Null         = "null"
 
 -- | Strict equality
 instance Eq Value where 

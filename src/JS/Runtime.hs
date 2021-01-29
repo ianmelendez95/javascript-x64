@@ -16,7 +16,7 @@ newtype Environment = Environment {
     bindings :: [Map String V.Value]
   }
 
-newtype JSError = TypeError String deriving (Show)
+newtype JSError = SyntaxError String deriving (Show)
 
 emptyEnvironment :: Environment 
 emptyEnvironment = Environment []

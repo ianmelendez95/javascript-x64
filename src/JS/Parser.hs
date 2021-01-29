@@ -33,12 +33,19 @@ term = choice
 -- |   higher number, earlier priority
 operatorTable :: [[Operator Parser Expr]]
 operatorTable =
-  [ [ binary "+" Add, binary "-" Sub ]    -- 14
+  [ [ postfix "++" incr, postfix "--" decr ] -- 17
+  , [ binary "+" Add, binary "-" Sub ]     -- 14
   , [ binary "<" Clt, binary ">" Cgt, binary ">=" Cgte, binary "<=" Clte ] -- 12
-  , [ binary "==" Ceq, binary "!=" Cneq ] -- 11
-  , [ binary "=" Assign ]                 -- 3
+  , [ binary "==" Ceq, binary "!=" Cneq ]  -- 11
+  , [ binary "=" Assign ]                  -- 3
   ]
   where 
+    incr :: Expr -> Expr
+    incr e = Assign e (Add e (Num 1))
+
+    decr :: Expr -> Expr 
+    decr e = Assign e (Sub e (Num 1))
+
     binary :: String -> (Expr -> Expr -> Expr) -> Operator Parser Expr
     binary  name f = InfixL  (f <$ symbol name)
 
