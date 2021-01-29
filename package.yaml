@@ -28,6 +28,11 @@ library:
     - text
     - megaparsec
     - parser-combinators
+    - containers
+    - vector
+    - mtl
+    - aeson
+    - bytestring
 
 executables:
   hjs:
@@ -42,6 +47,7 @@ executables:
       - haskeline
       - text
       - megaparsec
+      - mtl
 
 tests:
   javascript-x64-test:

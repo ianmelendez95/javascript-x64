@@ -29,10 +29,15 @@ term = choice
   , number
   ]
 
+-- | precedence ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+-- |   higher number, earlier priority
 operatorTable :: [[Operator Parser Expr]]
 operatorTable =
-  [ [ binary "+" Add, binary "-" Sub ]
-  , [ binary "=" Assign ] ]
+  [ [ binary "+" Add, binary "-" Sub ]    -- 14
+  , [ binary "<" Clt, binary ">" Cgt, binary ">=" Cgte, binary "<=" Clte ] -- 12
+  , [ binary "==" Ceq, binary "!=" Cneq ] -- 11
+  , [ binary "=" Assign ]                 -- 3
+  ]
   where 
     binary :: String -> (Expr -> Expr -> Expr) -> Operator Parser Expr
     binary  name f = InfixL  (f <$ symbol name)
