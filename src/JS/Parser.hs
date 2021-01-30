@@ -25,7 +25,7 @@ term = choice
   [ parens expr
   , forLoop
   , variable
-  , stringLiteral
+  , strLitDbl
   , number
   ]
 
@@ -60,8 +60,11 @@ forLoop = do (e1, e2, e3) <- symbol "for" *> forTerms
     forTerms :: Parser (Expr, Expr, Expr)
     forTerms = lexeme $ parens $ (,,) <$> lexeme expr <*> (symbol ";" *> lexeme expr) <*> (symbol ";" *> lexeme expr)
 
-stringLiteral :: Parser Expr
-stringLiteral = Str <$> lexeme (char '"' >> manyTill L.charLiteral (char '"'))
+strLitDbl :: Parser Expr
+strLitDbl = Str <$> lexeme (char '"' >> manyTill L.charLiteral (char '"'))
+
+strLitSgl :: Parser Expr 
+strLitSgl = Str <$> lexeme (char '\'' >> manyTill L.charLiteral (char '\''))
 
 number :: Parser Expr
 number = Num <$> lexeme (try L.float <|> L.decimal)

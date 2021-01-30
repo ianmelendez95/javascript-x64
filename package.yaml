@@ -33,6 +33,7 @@ library:
     - mtl
     - aeson
     - bytestring
+    - array
 
 executables:
   js:
