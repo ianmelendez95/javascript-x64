@@ -15,6 +15,7 @@ import JS.Parser
 import JS.Eval
 import JS.Value
 import JS.Runtime
+import JS.ALexer
 
 main :: IO ()
 main = runInputT defaultSettings (loop emptyEnvironment)
@@ -25,15 +26,17 @@ loop env =
      case minput of
        Nothing -> return ()
        Just ".exit" -> return ()
-       Just input -> 
-         case parseExpr input of 
-           (Left err) -> outputStrLn (errorBundlePretty err) >> loop env
-           (Right parsed) -> 
-             do outputStrLn $ "Parsed: " ++ show parsed
-                evalResult <- liftIO $ evalStart parsed
-                case evalResult of 
-                  (Left err) -> outputStrLn ("JS Error: " ++ show err) >> loop env
-                  (Right (res, env')) -> outputStrLn (show res) >> loop env'
+       Just input -> do let tokens = alexScanTokens input
+                        liftIO $ print tokens
+                        loop env
+        --  case parseExpr input of 
+        --    (Left err) -> outputStrLn (errorBundlePretty err) >> loop env
+        --    (Right parsed) -> 
+        --      do outputStrLn $ "Parsed: " ++ show parsed
+        --         evalResult <- liftIO $ evalStart parsed
+        --         case evalResult of 
+        --           (Left err) -> outputStrLn ("JS Error: " ++ show err) >> loop env
+        --           (Right (res, env')) -> outputStrLn (show res) >> loop env'
   where 
     printParsed :: Either ParseError Expr -> InputT IO ()
     printParsed (Left err) = outputStrLn $ errorBundlePretty err
