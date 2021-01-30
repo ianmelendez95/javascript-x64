@@ -11,7 +11,7 @@ import Data.List
 import GHC.Generics
 import qualified Data.Aeson as A
 
-import JS.Syntax (Expr)
+import JS.Exp
 
 data Value = Num Double 
            | NaN
@@ -19,8 +19,9 @@ data Value = Num Double
            | Str String
            | Object (Map String Value)
            | Array (Vector Value)
-           | Function [String] Expr
+           | Function String [String] Exp
            | Undefined
+           | ConsoleLog -- builtin
            | Null
 
 instance Show Value where 

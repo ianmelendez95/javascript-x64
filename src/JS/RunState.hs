@@ -11,6 +11,7 @@ type RunState = StateT Env.Environment (ExceptT JSError IO)
 data JSError = SyntaxError String
              | AccessError String
              | UndefinedVarError String
+             | TypeError String
 
 instance Show JSError where 
   show (SyntaxError msg) = "SyntaxError: " ++ msg

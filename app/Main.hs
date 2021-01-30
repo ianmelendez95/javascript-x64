@@ -11,14 +11,14 @@ import Control.Monad.State.Lazy
 import Control.Monad.Except
 import Control.Monad (void)
 
-import JS.Syntax
 import JS.HParser
-import JS.Eval hiding (eval)
+import qualified JS.NEval as E
 import JS.Value
 import JS.Runtime
 import JS.ALexer
+import JS.RunState
 import JS.Exp (Exp)
-import JS.Environment (Environment (..), emptyEnvironment)
+import JS.Environment (Environment (..), emptyEnvironment, initialEnvironment)
 
 import System.Environment
 
@@ -47,9 +47,11 @@ loop env =
         --           (Left err) -> outputStrLn ("JS Error: " ++ show err) >> loop env
         --           (Right (res, env')) -> outputStrLn (show res) >> loop env'
 
-eval :: String -> IO [Exp] 
+eval :: String -> IO () 
 eval input = do let tokens = alexScanTokens input
                 putStrLn $ "Tokens: " ++ show tokens
                 let parsed = parser tokens
                 putStrLn $ "Syntax: " ++ show parsed
-                return parsed
+                result <- runExceptT . evalStateT (E.evalExprs parsed) $ initialEnvironment 
+                print result 
+                return ()

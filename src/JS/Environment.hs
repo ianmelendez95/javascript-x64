@@ -18,7 +18,16 @@ emptyEnvironment :: Environment
 emptyEnvironment = Environment []
 
 initialEnvironment :: Environment 
-initialEnvironment = undefined
+initialEnvironment = 
+  pushBindingLayer 
+    [ ("console", V.Object (M.fromList [("log", V.ConsoleLog)]))
+    ] emptyEnvironment
+
+pushBindingLayer :: [(String, V.Value)] -> Environment -> Environment
+pushBindingLayer bs env = env { bindings = M.fromList bs : bindings env }
+
+newBindingLayer :: Environment -> Environment
+newBindingLayer env = env { bindings = M.empty : bindings env }
 
 lookupBinding :: String -> Environment -> Maybe V.Value
 lookupBinding name env = let res = mapMaybe (M.lookup name) (bindings env)
