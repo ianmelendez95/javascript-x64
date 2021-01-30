@@ -25,14 +25,16 @@ data Value = Num Double
            | Null
 
 instance Show Value where 
-  show (Num x)      = show x
-  show NaN          = "NaN"
-  show (Bl b)       = show b
-  show (Str s)      = s
-  show (Object map) = "[object Object]"
-  show (Array vect) = show vect
-  show Undefined    = "undefined"
-  show Null         = "null"
+  show (Num x)             = show x
+  show NaN                 = "NaN"
+  show (Bl b)              = show b
+  show (Str s)             = s
+  show (Object map)        = "[object Object]"
+  show (Array vect)        = show vect
+  show Undefined           = "undefined"
+  show Null                = "null"
+  show (Function name _ _) = "[Function: " ++ name ++ "]"
+  show ConsoleLog          = "[Function: log]"
 
 -- | Strict equality
 instance Eq Value where 

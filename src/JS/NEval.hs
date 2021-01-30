@@ -31,7 +31,7 @@ eval (E.Call fVar args) = do f <- eval fVar
 ---------------
 
 call :: V.Value -> [V.Value] -> RunState V.Value
-call V.ConsoleLog args = do let output = concatMap show args
+call V.ConsoleLog args = do let output = unwords $ map show args
                             liftIO $ putStrLn output
                             return V.Undefined
 call (V.Function name params body) args = do R.newEnvironment (zip params (args ++ repeat V.Undefined)) 

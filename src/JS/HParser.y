@@ -30,11 +30,13 @@ exps : {- empty -}            { [] }
 
 exp :: { E.Exp }
 exp : string                    { E.StringLit $1 }
-    | '(' exp ')'               { $2 }
-    | identifier                { E.Var $1 }
-    | identifier '.' identifier { E.VarAccess $1 $3 }
-    | exp '=' exp         { E.Assign $1 $3 }
-    | exp '(' args ')'    { E.Call $1 $3   }
+    | exp '=' exp               { E.Assign $1 $3 }
+    | varaccess                 { $1 }
+    | varaccess '(' args ')'    { E.Call $1 $3   }
+
+varaccess :: { E.Exp }    
+varaccess : identifier                { E.Var $1 }
+          | identifier '.' identifier { E.VarAccess $1 $3 }
 
 args :: { [E.Exp] }     
 args : {- empty -}          { []      }
