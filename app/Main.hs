@@ -9,16 +9,24 @@ import qualified Data.Text.IO as TIO
 
 import Control.Monad.State.Lazy
 import Control.Monad.Except
+import Control.Monad (void)
 
 import JS.Syntax
 import JS.HParser
-import JS.Eval
+import JS.Eval hiding (eval)
 import JS.Value
 import JS.Runtime
 import JS.ALexer
+import JS.Exp (Exp)
+
+import System.Environment
 
 main :: IO ()
-main = runInputT defaultSettings (loop emptyEnvironment)
+main = do args <- getArgs  
+          case args of 
+            [] -> runInputT defaultSettings (loop emptyEnvironment)
+            [file] -> do content <- readFile file
+                         void $ eval content
 
 loop :: Environment -> InputT IO ()
 loop env = 
@@ -26,10 +34,7 @@ loop env =
      case minput of
        Nothing -> return ()
        Just ".exit" -> return ()
-       Just input -> do let tokens = alexScanTokens input
-                        outputStrLn $ "Tokens: " ++ show tokens
-                        let parsed = parser tokens
-                        outputStrLn $ "Syntax: " ++ show parsed
+       Just input -> do liftIO $ eval input
                         loop env
         --  case parseExpr input of 
         --    (Left err) -> outputStrLn (errorBundlePretty err) >> loop env
@@ -39,3 +44,10 @@ loop env =
         --         case evalResult of 
         --           (Left err) -> outputStrLn ("JS Error: " ++ show err) >> loop env
         --           (Right (res, env')) -> outputStrLn (show res) >> loop env'
+
+eval :: String -> IO [Exp] 
+eval input = do let tokens = alexScanTokens input
+                putStrLn $ "Tokens: " ++ show tokens
+                let parsed = parser tokens
+                putStrLn $ "Syntax: " ++ show parsed
+                return parsed

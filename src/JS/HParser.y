@@ -8,7 +8,7 @@ import qualified JS.Token as T
 
 -- x = y(z)
 
-{- parser :: [T.Token] -> E.Expr -}
+{- parser :: [T.Token] -> [E.Expr] -}
 %name parser
 %tokentype { T.Token }
 %error { parseError }
@@ -24,15 +24,20 @@ import qualified JS.Token as T
 
 %% 
 
+exps :: { [E.Exp] }    
+exps : {- empty -}            { [] }
+     | exp exps               { $1 : $2 }
+
 exp :: { E.Exp }
 exp : string                  { E.StringLit $1 }
-    | var                     { $1 }
-    | var '=' exp             { E.Assign $1 $3 }
-    | objacc '(' args ')'     { E.Call $1 $3   }
+    | '(' exp ')'             { $2 }
+    | varaccess               { $1 }
+    | varaccess '=' exp       { E.Assign $1 $3 }
+    | varaccess '(' args ')'  { E.Call $1 $3   }
 
-objacc :: { E.Exp {- ObjAcc -} }    
-objacc : identifier         { E.Var $1 }
-       | var '.' var        { E.ObjAcc $1 $3 }
+varaccess :: { E.Exp }
+varaccess : var                      { $1 }
+          | var '.' varaccess        { E.VarAccess $1 $3 }
 
 var :: { E.Exp }       
     : identifier            { E.Var $1 }

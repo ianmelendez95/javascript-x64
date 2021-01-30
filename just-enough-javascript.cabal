@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9e22611c2c95be6647874994e9a68ba91e350f624a54b6e0074fb845aa135ef6
+-- hash: 2c6e53c250274c7ee451e586894b2d0314cf9c6b6c3b2c5d6c7d98bec6a08eab
 
 name:           just-enough-javascript
 version:        0.1.0.0
@@ -54,7 +54,7 @@ library
     , vector
   default-language: Haskell2010
 
-executable js
+executable hjs
   main-is: Main.hs
   other-modules:
       Paths_just_enough_javascript
