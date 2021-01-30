@@ -26,8 +26,16 @@ import qualified JS.Token as T
 
 exp :: { E.Exp }
 exp : string                  { E.StringLit $1 }
-    | identifier '=' exp      { E.Assign $1 $3 }
-    | identifier '(' args ')' { E.Call $1 $3   }
+    | var                     { $1 }
+    | var '=' exp             { E.Assign $1 $3 }
+    | objacc '(' args ')'     { E.Call $1 $3   }
+
+objacc :: { E.Exp {- ObjAcc -} }    
+objacc : identifier         { E.Var $1 }
+       | var '.' var        { E.ObjAcc $1 $3 }
+
+var :: { E.Exp }       
+    : identifier            { E.Var $1 }
 
 args :: { [E.Exp] }     
 args : {- empty -}          { []      }

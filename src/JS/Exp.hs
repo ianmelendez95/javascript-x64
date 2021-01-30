@@ -1,6 +1,8 @@
 module JS.Exp where 
 
 data Exp = StringLit String
-         | Call String [Exp]
-         | Assign String Exp
+         | Call Exp [Exp]
+         | Var String
+         | ObjAcc Exp Exp
+         | Assign Exp Exp
          deriving Show

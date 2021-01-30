@@ -27,9 +27,9 @@ loop env =
        Nothing -> return ()
        Just ".exit" -> return ()
        Just input -> do let tokens = alexScanTokens input
-                        outputStrLn $ show tokens
+                        outputStrLn $ "Tokens: " ++ show tokens
                         let parsed = parser tokens
-                        outputStrLn $ show parsed
+                        outputStrLn $ "Syntax: " ++ show parsed
                         loop env
         --  case parseExpr input of 
         --    (Left err) -> outputStrLn (errorBundlePretty err) >> loop env
