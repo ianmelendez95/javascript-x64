@@ -18,8 +18,10 @@ import JS.Value
 import JS.Runtime
 import JS.ALexer
 import JS.Exp (Exp)
+import JS.Environment (Environment (..), emptyEnvironment)
 
 import System.Environment
+
 
 main :: IO ()
 main = do args <- getArgs  

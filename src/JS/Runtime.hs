@@ -7,37 +7,16 @@ import Control.Monad.State.Lazy
 import Control.Monad.Except ( ExceptT )
 import Data.Maybe
 
-import qualified JS.Syntax as S
+import JS.RunState
 import qualified JS.Value as V
-
-type RunState = StateT Environment (ExceptT JSError IO)
-
-newtype Environment = Environment {
-    bindings :: [Map String V.Value]
-  }
-
-newtype JSError = SyntaxError String deriving (Show)
-
-emptyEnvironment :: Environment 
-emptyEnvironment = Environment []
+import qualified JS.Environment as Env
 
 lookupVar :: String -> RunState V.Value
-lookupVar name = fromMaybe V.Undefined . lookupBinding name . bindings <$> get
+lookupVar name = fromMaybe V.Undefined <$> gets (Env.lookupBinding name)
+
+updateVar :: String -> V.Value -> RunState ()
+updateVar name val = modify (Env.updateBinding name val)
 
 assign :: String -> V.Value -> RunState V.Value
-assign name val = modify insert >> return val
-  where 
-    insert :: Environment -> Environment
-    insert env = env { bindings = updateBinding name val $ bindings env }
-
-lookupBinding :: String -> [Map String V.Value] -> Maybe V.Value
-lookupBinding name bs = let res = mapMaybe (M.lookup name) bs
-                         in if null res then Nothing else Just (head res)
-
-updateBinding :: String -> V.Value -> [Map String V.Value] -> [Map String V.Value]
-updateBinding name val [] = [M.singleton name val]
-updateBinding name val [bs] = [M.insert name val bs]
-updateBinding name val (b:bs) = case M.lookup name b of 
-                                  Nothing -> b : updateBinding name val bs
-                                  Just _  -> M.insert name val b : bs
+assign name val = modify (Env.insertBinding name val) >> return val
 

@@ -3,7 +3,7 @@ module JS.Exp where
 -- | expression evaluates to a value
 data Exp = StringLit String
          | Var String
-         | VarAccess Exp Exp
+         | VarAccess String String
          | Call Exp [Exp]
          | Assign Exp Exp
          deriving Show

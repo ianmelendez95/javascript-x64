@@ -6,11 +6,12 @@ import Control.Monad
 import Text.Read hiding (lift)
 import Data.Maybe
 
+import JS.RunState
 import qualified JS.Syntax as S
 import qualified JS.Value as V
 import qualified JS.Runtime as R
 
-eval :: S.Expr -> R.RunState V.Value  
+eval :: S.Expr -> RunState V.Value  
 eval (S.Num num)  = pure (V.Num num)
 eval (S.Str str)  = pure (V.Str str)
 eval (S.Var name) = R.lookupVar name
@@ -29,7 +30,7 @@ eval (S.For init check update body) = for init check update body
 -- Constructs --
 ----------------
 
-for :: S.Expr -> S.Expr -> S.Expr -> [S.Expr] -> R.RunState V.Value
+for :: S.Expr -> S.Expr -> S.Expr -> [S.Expr] -> RunState V.Value
 for init check update body = 
   do eval init
      liftIO $ putStrLn "Evaling for"
@@ -37,7 +38,7 @@ for init check update body =
      if not cont then return V.Undefined
                  else loop >> return V.Undefined 
   where
-    loop :: R.RunState ()
+    loop :: RunState ()
     loop = do mapM_ eval body
               eval update
               cont <- truthy <$> eval check 
@@ -47,11 +48,11 @@ for init check update body =
 -- Stateful Ops --
 ------------------
 
-assign :: S.Expr -> S.Expr -> R.RunState V.Value
+assign :: S.Expr -> S.Expr -> RunState V.Value
 assign (S.Var name) val = 
   do newVal <- eval val
      R.assign name newVal
-assign var val = lift $ throwError $ R.SyntaxError $ "Invalid left-hand side expression in postfix operation: " ++ show (S.Assign var val)
+assign var val = lift $ throwError $ SyntaxError $ "Invalid left-hand side expression in postfix operation: " ++ show (S.Assign var val)
 
 ---------------
 -- Value Ops --

@@ -19,27 +19,16 @@ data Value = Num Double
            | Str String
            | Object (Map String Value)
            | Array (Vector Value)
+           | Function [String] Expr
            | Undefined
            | Null
-           deriving (Generic)
-
-instance A.FromJSON Value
-instance A.ToJSON Value where 
-  toJSON (Num x)      = A.toJSON x
-  toJSON NaN          = A.Null 
-  toJSON (Bl b)       = A.toJSON b
-  toJSON (Str s)      = A.toJSON s
-  toJSON (Object map) = A.toJSON map
-  toJSON (Array vect) = A.toJSON vect
-  toJSON Undefined    = A.Null
-  toJSON Null         = A.Null
 
 instance Show Value where 
   show (Num x)      = show x
   show NaN          = "NaN"
   show (Bl b)       = show b
   show (Str s)      = s
-  show (Object map) = show $ A.toJSON map
+  show (Object map) = "[object Object]"
   show (Array vect) = show vect
   show Undefined    = "undefined"
   show Null         = "null"
