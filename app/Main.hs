@@ -11,7 +11,7 @@ import Control.Monad.State.Lazy
 import Control.Monad.Except
 
 import JS.Syntax
-import JS.Parser
+import JS.HParser
 import JS.Eval
 import JS.Value
 import JS.Runtime
@@ -27,7 +27,9 @@ loop env =
        Nothing -> return ()
        Just ".exit" -> return ()
        Just input -> do let tokens = alexScanTokens input
-                        liftIO $ print tokens
+                        outputStrLn $ show tokens
+                        let parsed = parser tokens
+                        outputStrLn $ show parsed
                         loop env
         --  case parseExpr input of 
         --    (Left err) -> outputStrLn (errorBundlePretty err) >> loop env
@@ -37,10 +39,3 @@ loop env =
         --         case evalResult of 
         --           (Left err) -> outputStrLn ("JS Error: " ++ show err) >> loop env
         --           (Right (res, env')) -> outputStrLn (show res) >> loop env'
-  where 
-    printParsed :: Either ParseError Expr -> InputT IO ()
-    printParsed (Left err) = outputStrLn $ errorBundlePretty err
-    printParsed (Right expr) = outputStrLn $ show expr
-
-    evalStart :: Expr -> IO (Either JSError (Value, Environment))
-    evalStart expr = runExceptT . runStateT (eval expr) $ env
