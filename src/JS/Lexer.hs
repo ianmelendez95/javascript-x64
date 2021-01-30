@@ -11,11 +11,13 @@ import Data.Functor
 
 import JS.Token
 
+import JS.ALexer
+
 type Parser = Parsec Void String
 type ParseError = ParseErrorBundle String Void
 
 tokenize :: String -> Either ParseError [Token]
-tokenize = parse (many token) "<stdio>"
+tokenize = Right . alexScanTokens
 
 token :: Parser Token
 token = choice 

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bfbaf90b1ecd11457b679bb8e981ec146ef40bf4d95b5fdfea59bd78c00718ad
+-- hash: 9e22611c2c95be6647874994e9a68ba91e350f624a54b6e0074fb845aa135ef6
 
 name:           just-enough-javascript
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      JS.ALexer
       JS.Eval
       JS.Exp
       JS.HParser
