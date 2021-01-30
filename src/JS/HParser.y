@@ -1,5 +1,5 @@
 {
-module JS.HParser where 
+module JS.HParser (parser) where 
 
 import Data.Char
 import qualified JS.Exp as E
