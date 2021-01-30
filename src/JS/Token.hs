@@ -9,3 +9,5 @@ data Token = Identifier String
            | RP 
            deriving Show
 
+mkStringLit :: String -> Token 
+mkStringLit = StringLit . init . tail
