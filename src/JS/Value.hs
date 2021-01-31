@@ -4,9 +4,10 @@ module JS.Value where
 
 import Data.Map (Map)
 import qualified Data.Map
-import Data.Vector ( Vector )
+import Data.Vector ( Vector, (!?) )
 import qualified Data.Vector as V
 import Data.List
+import Data.Maybe (fromMaybe)
 
 import GHC.Generics
 import qualified Data.Aeson as A
@@ -69,3 +70,13 @@ instance Ord Value where
 
   x <= y = x == y || x < y              -- hopefully these account for that
   x >= y = x == y || x > y
+
+arrayIndex :: Value -> Int -> Value 
+arrayIndex (Array vect) index = fromMaybe Undefined (vect !? index) 
+arrayIndex _ _ = Undefined
+
+arrayFromListWith :: (a -> Value) -> [a] -> Value
+arrayFromListWith f xs = arrayFromList $ map f xs
+
+arrayFromList :: [Value] -> Value
+arrayFromList values = Array (V.fromList values)

@@ -3,7 +3,7 @@ module JS.FSModule where
 import Data.Map (Map)
 import qualified Data.Map as M
 import Control.Monad.State
-import Control.Exception
+import Control.Exception hiding (TypeError)
 import Control.Monad.Except
 import Data.Typeable
 
@@ -12,6 +12,8 @@ import JS.RunState
 
 fsModule :: V.Value
 fsModule = V.Object . M.fromList $ [ ("readFileSync", V.ReadFileSync ) ]
+
+-- readFileSync
 
 readFileSync :: [V.Value] -> RunState V.Value 
 readFileSync [V.Str fileName, V.Str "utf8"] = 
@@ -26,3 +28,5 @@ readFileSync [V.Str fileName, V.Str "utf8"] =
     catchExc :: SomeException -> IO (Maybe String)
     catchExc (SomeException e) = do print $ typeOf e
                                     return Nothing
+
+readFileSync args = lift $ throwError (TypeError $ "readFileSync: invalid arguments: " ++ show args)

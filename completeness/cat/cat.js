@@ -1,4 +1,5 @@
 fs = require('fs')
-file = process.argv[1]
+args = process.argv
+file = args[1]
 data = fs.readFileSync(file, 'utf8')
 console.log(data)

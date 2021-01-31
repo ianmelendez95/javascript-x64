@@ -24,6 +24,7 @@ eval :: E.Exp -> RunState V.Value
 eval (E.StringLit str) = return $ V.Str str
 eval (E.Var var) = R.lookupVar var
 eval (E.VarAccess var1 var2) = varAccess var1 var2
+eval (E.ArrAccess var index) = arrAccess var index
 eval (E.Assign lhs rhs) = assign lhs rhs
 eval (E.Call fVar args) = do f <- eval fVar
                              as <- mapM eval args
@@ -39,16 +40,29 @@ assign (E.Var name) rhs = do value <- eval rhs
                              R.updateVar name value
                              return value
 
+---- call
+
 call :: V.Value -> [V.Value] -> RunState V.Value
+-- primitives
 call V.ConsoleLog args = do let output = unwords $ map show args
                             liftIO $ putStrLn output
                             return V.Undefined
 call V.Require args = case args of 
                         [V.Str "fs"] -> return fsModule
 call V.ReadFileSync args = readFileSync args
+
+-- compound
 call (V.Function name params body) args = do R.newEnvironment (zip params (args ++ repeat V.Undefined)) 
                                              eval body
 call val args = throwError $ TypeError ("not a function: " ++ show val)
+
+---- value access
+
+arrAccess :: String -> Int -> RunState V.Value
+arrAccess varName index = do var <- R.lookupVar varName
+                             case var of 
+                               V.Undefined -> throwError $ UndefinedVarError varName
+                               _           -> return $ V.arrayIndex var index
 
 varAccess :: String -> String -> RunState V.Value
 varAccess var1 var2 = do v1 <- R.lookupVar var1

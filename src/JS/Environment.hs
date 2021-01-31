@@ -10,6 +10,8 @@ import Data.Maybe
 import qualified JS.Syntax as S
 import qualified JS.Value as V
 
+import Debug.Trace
+
 newtype Environment = Environment {
     bindings :: [Map String V.Value]
   }
@@ -17,11 +19,13 @@ newtype Environment = Environment {
 emptyEnvironment :: Environment
 emptyEnvironment = Environment []
 
-initialEnvironment :: Environment 
-initialEnvironment = 
+initialEnvironment :: [String] -> Environment 
+initialEnvironment args = trace ("args: " ++ show args) $
   pushBindingLayer 
     [ ("console", V.Object (M.fromList [("log", V.ConsoleLog)]))
     , ("require", V.Require)
+    , ("process", V.Object (M.fromList 
+                  [("argv", V.arrayFromListWith  V.Str ("hjs" : args))]))
     ] emptyEnvironment
 
 pushBindingLayer :: [(String, V.Value)] -> Environment -> Environment

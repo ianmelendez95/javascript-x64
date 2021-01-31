@@ -1,3 +1,10 @@
+process.argv
+args["str"]
+args[0]
+args = process.argv
+process.argv
+process
+arr[1]
 console.log(data)
 data = fs.readFileSync('aoc/day1/short-input.txt', 'utf8')
 fs.readFileSync('aoc/day1/short-input.txt', 'utf8')

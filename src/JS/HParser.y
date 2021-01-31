@@ -16,11 +16,14 @@ import qualified JS.Token as T
 %token 
   identifier  { T.Identifier $$ }
   string      { T.StringLit $$  }
+  number      { T.IntLit $$     }
   '='         { T.Eq            }
   '.'         { T.Period        }
   ','         { T.Comma         }
   '('         { T.LP            }
   ')'         { T.RP            }
+  '['         { T.LBrack        }
+  ']'         { T.RBrack        }
 
 %% 
 
@@ -29,10 +32,12 @@ exps : {- empty -}            { [] }
      | exp exps               { $1 : $2 }
 
 exp :: { E.Exp }
-exp : string                    { E.StringLit $1 }
-    | exp '=' exp               { E.Assign $1 $3 }
-    | varaccess                 { $1 }
-    | varaccess '(' args ')'    { E.Call $1 $3   }
+exp : string                    { E.StringLit $1    }
+    | exp '=' exp               { E.Assign $1 $3    }
+    | identifier '[' number ']' { E.ArrAccess $1 $3 }
+    | varaccess                 { $1                }
+    | varaccess '(' args ')'    { E.Call $1 $3      }
+
 
 varaccess :: { E.Exp }    
 varaccess : identifier                { E.Var $1 }
