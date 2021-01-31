@@ -18,16 +18,16 @@ import JS.Runtime
 import JS.ALexer
 import JS.RunState
 import JS.Exp (Exp)
-import JS.Environment (Environment (..), emptyEnvironment, initialEnvironment)
+import JS.Environment (Environment (..), initialEnvironment)
 
 import System.Environment
 
 main :: IO ()
 main = do args <- getArgs  
           case args of 
-            [] -> runInputT defaultSettings (loop emptyEnvironment)
+            [] -> runInputT defaultSettings (loop initialEnvironment )
             [file] -> do content <- readFile file
-                         void $ eval content
+                         void $ eval initialEnvironment content
 
 loop :: Environment -> InputT IO ()
 loop env = 
@@ -35,14 +35,15 @@ loop env =
      case minput of
        Nothing -> return ()
        Just ".exit" -> return ()
-       Just input -> do liftIO $ eval input
-                        loop env
+       Just input -> do env' <- liftIO $ eval env input
+                        loop env'
 
-eval :: String -> IO () 
-eval input = do let tokens = alexScanTokens input
-                putStrLn $ "Tokens: " ++ show tokens
-                let parsed = parser tokens
-                putStrLn $ "Syntax: " ++ show parsed
-                result <- runExceptT . evalStateT (E.evalExprs parsed) $ initialEnvironment 
-                print result 
-                return ()
+eval :: Environment -> String -> IO Environment 
+eval env input = do let tokens = alexScanTokens input
+                    putStrLn $ "Tokens: " ++ show tokens
+                    let parsed = parser tokens
+                    putStrLn $ "Syntax: " ++ show parsed
+                    result <- liftIO $ runExceptT . runStateT (E.evalExprs parsed) $ env 
+                    case result of 
+                      (Left err) -> print err >> return env
+                      (Right (val, env')) -> print val >> return env'
