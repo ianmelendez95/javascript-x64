@@ -1,6 +1,6 @@
 module JS.RunState where
 
-import Control.Monad.State.Lazy
+import Control.Monad.State.Lazy ( StateT )
 import Control.Monad.Except ( ExceptT )
 import Data.Maybe
 
