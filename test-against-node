@@ -1,0 +1,14 @@
+#!/usr/bin/zsh
+
+JS_FILE=${1:a}
+NODE_OUT=$(node ${JS_FILE})
+HJS_OUT=$(stack build >> test-against-node.out && stack exec hjs -- ${JS_FILE})
+
+echo "node out:\n${NODE_OUT}"
+echo "hjs out:\n${HJS_OUT}"
+
+if [[ $NODE_OUT != $HJS_OUT ]]; then 
+  echo "MISMATCH: node <-> hjs"
+  diff -y <(echo $NODE_OUT) <(echo $HJS_OUT)
+  exit 1
+fi
