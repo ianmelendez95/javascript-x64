@@ -1,4 +1,4 @@
 fs = require('fs')
 
-data = fs.readFileSync('short-input.txt', 'utf8')
+data = fs.readFileSync('aoc/day1/short-input.txt', 'utf8')
 console.log(data)

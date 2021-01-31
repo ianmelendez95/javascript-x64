@@ -12,7 +12,7 @@ import qualified JS.Value as V
 import qualified JS.Runtime as R
 import qualified JS.Exp as E
 
-import JS.FSModule (fsModule)
+import JS.FSModule (fsModule, readFileSync)
 
 evalExprs :: [E.Exp] -> RunState V.Value
 evalExprs [] = return V.Undefined
@@ -45,6 +45,7 @@ call V.ConsoleLog args = do let output = unwords $ map show args
                             return V.Undefined
 call V.Require args = case args of 
                         [V.Str "fs"] -> return fsModule
+call V.ReadFileSync args = readFileSync args
 call (V.Function name params body) args = do R.newEnvironment (zip params (args ++ repeat V.Undefined)) 
                                              eval body
 call val args = throwError $ TypeError ("not a function: " ++ show val)

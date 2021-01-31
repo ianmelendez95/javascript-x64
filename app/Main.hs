@@ -1,6 +1,7 @@
 module Main where
 
 import System.Console.Haskeline
+import System.Console.Haskeline.History
 
 import Text.Megaparsec hiding (ParseError)
 import Data.Text (Text)
@@ -19,13 +20,15 @@ import JS.ALexer
 import JS.RunState
 import JS.Exp (Exp)
 import JS.Environment (Environment (..), initialEnvironment)
+import Control.Exception
 
 import System.Environment
 
 main :: IO ()
 main = do args <- getArgs  
           case args of 
-            [] -> runInputT defaultSettings (loop initialEnvironment )
+            [] -> runInputT (defaultSettings { historyFile = Just "hjs-history" }) 
+                            (loop initialEnvironment)
             [file] -> do content <- readFile file
                          void $ eval initialEnvironment content
 
@@ -35,15 +38,15 @@ loop env =
      case minput of
        Nothing -> return ()
        Just ".exit" -> return ()
-       Just input -> do env' <- liftIO $ eval env input
+       Just input -> do (val, env') <- liftIO $ eval env input
                         loop env'
 
-eval :: Environment -> String -> IO Environment 
+eval :: Environment -> String -> IO (Value, Environment) 
 eval env input = do let tokens = alexScanTokens input
                     putStrLn $ "Tokens: " ++ show tokens
                     let parsed = parser tokens
                     putStrLn $ "Syntax: " ++ show parsed
                     result <- liftIO $ runExceptT . runStateT (E.evalExprs parsed) $ env 
                     case result of 
-                      (Left err) -> print err >> return env
-                      (Right (val, env')) -> print val >> return env'
+                      (Left err) -> print err >> return (Undefined, env)
+                      (Right resVal) -> return resVal
