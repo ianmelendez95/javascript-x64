@@ -22,7 +22,6 @@ import JS.Environment (Environment (..), emptyEnvironment, initialEnvironment)
 
 import System.Environment
 
-
 main :: IO ()
 main = do args <- getArgs  
           case args of 
@@ -38,14 +37,6 @@ loop env =
        Just ".exit" -> return ()
        Just input -> do liftIO $ eval input
                         loop env
-        --  case parseExpr input of 
-        --    (Left err) -> outputStrLn (errorBundlePretty err) >> loop env
-        --    (Right parsed) -> 
-        --      do outputStrLn $ "Parsed: " ++ show parsed
-        --         evalResult <- liftIO $ evalStart parsed
-        --         case evalResult of 
-        --           (Left err) -> outputStrLn ("JS Error: " ++ show err) >> loop env
-        --           (Right (res, env')) -> outputStrLn (show res) >> loop env'
 
 eval :: String -> IO () 
 eval input = do let tokens = alexScanTokens input

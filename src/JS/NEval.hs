@@ -12,6 +12,8 @@ import qualified JS.Value as V
 import qualified JS.Runtime as R
 import qualified JS.Exp as E
 
+import JS.FSModule (fsModule)
+
 evalExprs :: [E.Exp] -> RunState V.Value
 evalExprs [] = return V.Undefined
 evalExprs [e] = eval e
@@ -22,6 +24,7 @@ eval :: E.Exp -> RunState V.Value
 eval (E.StringLit str) = return $ V.Str str
 eval (E.Var var) = R.lookupVar var
 eval (E.VarAccess var1 var2) = varAccess var1 var2
+eval (E.Assign lhs rhs) = assign lhs rhs
 eval (E.Call fVar args) = do f <- eval fVar
                              as <- mapM eval args
                              call f as
@@ -30,10 +33,18 @@ eval (E.Call fVar args) = do f <- eval fVar
 -- Value Ops --
 ---------------
 
+-- TODO flesh out assign
+assign :: E.Exp -> E.Exp -> RunState V.Value
+assign (E.Var name) rhs = do value <- eval rhs
+                             R.updateVar name value
+                             return value
+
 call :: V.Value -> [V.Value] -> RunState V.Value
 call V.ConsoleLog args = do let output = unwords $ map show args
                             liftIO $ putStrLn output
                             return V.Undefined
+call V.Require args = case args of 
+                        [V.Str "fs"] -> return fsModule
 call (V.Function name params body) args = do R.newEnvironment (zip params (args ++ repeat V.Undefined)) 
                                              eval body
 call val args = throwError $ TypeError ("not a function: " ++ show val)

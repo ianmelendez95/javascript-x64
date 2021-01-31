@@ -21,6 +21,7 @@ initialEnvironment :: Environment
 initialEnvironment = 
   pushBindingLayer 
     [ ("console", V.Object (M.fromList [("log", V.ConsoleLog)]))
+    , ("require", V.Require)
     ] emptyEnvironment
 
 pushBindingLayer :: [(String, V.Value)] -> Environment -> Environment

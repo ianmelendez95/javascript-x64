@@ -21,8 +21,11 @@ data Value = Num Double
            | Array (Vector Value)
            | Function String [String] Exp
            | Undefined
-           | ConsoleLog -- builtin
            | Null
+           -- builtins
+           | ConsoleLog 
+           | Require
+           | ReadFileSync
 
 instance Show Value where 
   show (Num x)             = show x
@@ -35,18 +38,23 @@ instance Show Value where
   show Null                = "null"
   show (Function name _ _) = "[Function: " ++ name ++ "]"
   show ConsoleLog          = "[Function: log]"
+  show Require             = "[Function: require]"
+  show ReadFileSync        = "[Function: readFileSync]"
 
 -- | Strict equality
 instance Eq Value where 
-  (Num x)    == (Num y)     = x == y
-  (Bl b)     == (Bl b')     = b == b'
-  (Str str)  == (Str str')  = str == str'
-  (Object o) == (Object o') = o == o'
-  (Array a)  == (Array a')  = a == a'
-  Undefined  == Undefined   = True
-  Undefined  == Null        = True
-  Null       == Undefined   = True
-  _          == _           = False
+  (Num x)      == (Num y)      = x == y
+  (Bl b)       == (Bl b')      = b == b'
+  (Str str)    == (Str str')   = str == str'
+  (Object o)   == (Object o')  = o == o'
+  (Array a)    == (Array a')   = a == a'
+  Undefined    == Undefined    = True
+  Undefined    == Null         = True
+  Null         == Undefined    = True
+  ConsoleLog   == ConsoleLog   = True 
+  Require      == Require      = True 
+  ReadFileSync == ReadFileSync = True
+  _            == _            = False
 
 instance Ord Value where 
   compare (Num x)    (Num y)     = compare x y
