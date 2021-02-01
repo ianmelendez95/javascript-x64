@@ -29,8 +29,8 @@ main = do args <- getArgs
           case args of 
             [] -> runInputT (defaultSettings { historyFile = Just "hjs-history" }) 
                             (loop $ initialEnvironment args)
-            [file] -> do content <- readFile file
-                         void $ eval (initialEnvironment  args) content
+            (file : _) -> do content <- readFile file
+                             void $ eval (initialEnvironment  args) content
 
 loop :: Environment -> InputT IO ()
 loop env = 
