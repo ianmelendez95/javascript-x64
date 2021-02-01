@@ -4,6 +4,8 @@ Yet another Javascript interpreter.
 
 Disclaimer: Being a learning project, it's not intended to be a fully ECMA standards compliant or anything resembling a production ready utility.
 
+Using [Advent of Code 2016](https://adventofcode.com/2016) to drive progress
+
 ## Completeness
 
 - [x] Hello World Complete - print "Hello, World!" to stdout
