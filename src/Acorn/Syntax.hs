@@ -1,15 +1,23 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Acorn.Output where 
+module Acorn.Syntax 
+  ( AcornOutput (..)
+  , AcornError (..)
+  , Program (..)
+  , ExpressionStatement (..)
+  , Expression (..)
+  , Literal (..)
+  , Pos (..)
+  ) where 
 
 import Data.Aeson
 import Data.Aeson.Types
 import Data.Text (unpack)
 import Data.Scientific (toRealFloat)
 
-data Output = OutputError AcornError 
-            | OutputResult Program
-            deriving Show
+data AcornOutput = OutputError AcornError 
+                 | OutputResult Program
+                 deriving Show
 
 data AcornError = AcornError 
   { acorn_error_name    :: String
@@ -41,15 +49,14 @@ type Pos = (Int, Int)
 -- withObject :: String -> (Object -> Parser a) -> Value -> Parser a
 -- (.:)       :: Object -> Text -> Parser a
 
-instance FromJSON Output where 
-  parseJSON value = withObject "Output" 
+instance FromJSON AcornOutput where 
+  parseJSON value = withObject "AcornOutput" 
     (\v -> do tipe <- v .: "type"
               case tipe of 
                 (String "Error") -> OutputError <$> parseJSON value
                 (String "Program") -> OutputResult <$> parseJSON value
     ) 
     value
-
 
 instance FromJSON AcornError where 
   parseJSON = withObject "AcornError" $ \v -> 

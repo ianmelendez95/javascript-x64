@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 620c343a061775e9873aa27ef3acc72073d60e97454a7c00890c8eeccafac3c7
+-- hash: 9fbf1b9a6acedc1790d85ed67008087fe8994aefb60ef8dac97a3acec0e0122c
 
 name:           just-enough-javascript
 version:        0.1.0.0
@@ -28,7 +28,7 @@ source-repository head
 library
   exposed-modules:
       Acorn.Client
-      Acorn.Output
+      Acorn.Syntax
       JS.ALexer
       JS.Environment
       JS.Eval
