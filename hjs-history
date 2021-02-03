@@ -1,3 +1,27 @@
+console.log("hello")
+console.log("hello"
+x = 5
+x = 4
+;
+y=console.log["hello"]
+y=console.log
+y=console.log("hello")
+y=console.log("hello");
+y=console.log("hello")
+y=console.log("hello");
+(y=console.log("hello");)
+(y=console.log("hello"))
+(y=console.log)
+(y=console.log("hello"))
+y=console.log("hello")
+y=console("hello")
+y = console("hello")
+var y = console("hello")
+var y = console("hello", "world")
+console("hello", "world")
+console("hello")
+console.log
+console.log
 process.argv
 args["str"]
 args[0]

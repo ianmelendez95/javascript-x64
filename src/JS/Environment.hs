@@ -7,7 +7,6 @@ import Control.Monad.State.Lazy
 import Control.Monad.Except ( ExceptT )
 import Data.Maybe
 
-import qualified JS.Syntax as S
 import qualified JS.Value as V
 
 import Debug.Trace

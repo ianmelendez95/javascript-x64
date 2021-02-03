@@ -21,8 +21,11 @@ import JS.RunState
 import JS.Exp (Exp)
 import JS.Environment (Environment (..), initialEnvironment)
 import Control.Exception
+import Text.Pretty.Simple (pPrint)
 
 import System.Environment
+
+import qualified Language.JavaScript.Parser as JS
 
 main :: IO ()
 main = do args <- getArgs  
@@ -30,7 +33,9 @@ main = do args <- getArgs
             [] -> runInputT (defaultSettings { historyFile = Just "hjs-history" }) 
                             (loop $ initialEnvironment args)
             (file : _) -> do content <- readFile file
-                             void $ eval (initialEnvironment  args) content
+                             let parsed = JS.parse content file
+                             pPrint parsed
+                            --  void $ eval (initialEnvironment  args) content
 
 loop :: Environment -> InputT IO ()
 loop env = 
@@ -38,8 +43,8 @@ loop env =
      case minput of
        Nothing -> return ()
        Just ".exit" -> return ()
-       Just input -> do (val, env') <- liftIO $ eval env input
-                        loop env'
+       Just input -> do liftIO $ evalJS input
+                        loop env
 
 eval :: Environment -> String -> IO (Value, Environment) 
 eval env input = do let tokens = alexScanTokens input
@@ -50,3 +55,7 @@ eval env input = do let tokens = alexScanTokens input
                     case result of 
                       (Left err) -> print err >> return (Undefined, env)
                       (Right resVal) -> return resVal
+
+evalJS :: String -> IO ()
+evalJS input = do let parsed = JS.parse input "<stdio>"
+                  pPrint parsed

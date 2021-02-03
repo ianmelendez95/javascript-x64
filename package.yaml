@@ -34,6 +34,8 @@ library:
     - aeson
     - bytestring
     - array
+    - language-javascript
+    - process
 
 executables:
   hjs:
@@ -49,6 +51,8 @@ executables:
       - text
       - megaparsec
       - mtl
+      - language-javascript
+      - pretty-simple
 
 tests:
   just-enough-javascript-test:
