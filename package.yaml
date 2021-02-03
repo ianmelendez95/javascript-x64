@@ -36,6 +36,7 @@ library:
     - array
     - language-javascript
     - process
+    - scientific
 
 executables:
   hjs:
