@@ -59,17 +59,20 @@ instance FromJSON AcornError where
                <*> parseErrorLoc v
 
 parseErrorLoc :: Object -> Parser (Int, Int)
-parseErrorLoc v = v .: "error loc" >>= withObject "acorn loc" (\eloc -> (,) <$> eloc .: "line" <*> eloc .: "column")
+parseErrorLoc v = do loc <- v .: "error loc"
+                     withObject "acorn loc" 
+                                (\eloc -> (,) <$> eloc .: "line" <*> eloc .: "column") 
+                                loc
 
 instance FromJSON Program where 
   parseJSON = withObject "Program" $ \v -> 
-    Program <$> loc v <?> Key "program loc"
+    Program <$> pos v <?> Key "program pos"
             <*> v .: "sourceType"
             <*> v .: "body"
 
 instance FromJSON ExpressionStatement where 
   parseJSON = withObject "ExpressionStatement" $ \v -> 
-    ExpressionStatement <$> loc v <?> Key "expression statement loc"
+    ExpressionStatement <$> pos v <?> Key "expression statement pos"
                         <*> v .: "expression"
 
 instance FromJSON Expression where 
@@ -79,31 +82,31 @@ instance FromJSON Expression where
          (String "Identifier") -> identifier v
          (String "MemberExpression") -> memberExpression v
          (String "CallExpression") -> callExpression v
-         (String "Literal") -> Literal <$> (loc v <?> Key "literal loc") <*> literal v
+         (String "Literal") -> Literal <$> (pos v <?> Key "literal pos") <*> literal v
          _ -> undefined
 
 identifier :: Object -> Parser Expression
-identifier v = Identifier <$> loc v <*> v .: "name"
+identifier v = Identifier <$> pos v <*> v .: "name"
 
 memberExpression :: Object -> Parser Expression
-memberExpression v = MemberExpression <$> loc v <?> Key "member expression loc"
+memberExpression v = MemberExpression <$> pos v <?> Key "member expression pos"
                                       <*> v .: "computed" 
                                       <*> v .: "object"
                                       <*> v .: "property"
 
 callExpression :: Object -> Parser Expression
-callExpression v = CallExpression <$> loc v <?> Key "call expression loc"
+callExpression v = CallExpression <$> pos v <?> Key "call expression pos"
                                   <*> v .: "callee"
                                   <*> v .: "arguments"
 
 literal :: Object -> Parser Literal
 literal v = do value <- v .: "value" 
                case value of 
-                 (String text) -> LiteralString  <$> loc v <*> pure (unpack text)
-                 (Bool bool)   -> LiteralBoolean <$> loc v <*> pure bool
-                 (Number sci)  -> LiteralNumber  <$> loc v <*> pure (toRealFloat sci)
-                 Null          -> LiteralNull    <$> loc v
+                 (String text) -> LiteralString  <$> pos v <*> pure (unpack text)
+                 (Bool bool)   -> LiteralBoolean <$> pos v <*> pure bool
+                 (Number sci)  -> LiteralNumber  <$> pos v <*> pure (toRealFloat sci)
+                 Null          -> LiteralNull    <$> pos v
                  _ -> error $ "Not a literal type: " ++ show value
 
-loc :: Object -> Parser (Int, Int)
-loc v = (,) <$> v .: "start" <*> v .: "end"
+pos :: Object -> Parser (Int, Int)
+pos v = (,) <$> v .: "start" <*> v .: "end"
