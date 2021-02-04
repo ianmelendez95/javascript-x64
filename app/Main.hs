@@ -1,31 +1,19 @@
 module Main where
 
 import System.Console.Haskeline
-import System.Console.Haskeline.History
-
-import Text.Megaparsec hiding (ParseError)
-import Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
 
 import Control.Monad.State.Lazy
 import Control.Monad.Except
-import Control.Monad (void)
 
 import JS.HParser
 import qualified JS.NEval as E
 import JS.Value
-import JS.Runtime
 import JS.ALexer
-import JS.RunState
-import JS.Exp (Exp)
 import JS.Environment (Environment (..), initialEnvironment)
-import Control.Exception
 import Text.Pretty.Simple (pPrint)
 
 import System.Environment
-
-import qualified Language.JavaScript.Parser as JS
+import Acorn.Client
 
 main :: IO ()
 main = do args <- getArgs  
@@ -33,9 +21,8 @@ main = do args <- getArgs
             [] -> runInputT (defaultSettings { historyFile = Just "hjs-history" }) 
                             (loop $ initialEnvironment args)
             (file : _) -> do content <- readFile file
-                             let parsed = JS.parse content file
+                             parsed <- parseJS content
                              pPrint parsed
-                            --  void $ eval (initialEnvironment  args) content
 
 loop :: Environment -> InputT IO ()
 loop env = 
@@ -47,9 +34,9 @@ loop env =
                         loop env
 
 eval :: Environment -> String -> IO (Value, Environment) 
-eval env input = do let tokens = alexScanTokens input
-                    putStrLn $ "Tokens: " ++ show tokens
-                    let parsed = parser tokens
+eval env input = do let toks = alexScanTokens input
+                    putStrLn $ "Tokens: " ++ show toks
+                    let parsed = parser toks
                     putStrLn $ "Syntax: " ++ show parsed
                     result <- liftIO $ runExceptT . runStateT (E.evalExprs parsed) $ env 
                     case result of 
@@ -57,5 +44,5 @@ eval env input = do let tokens = alexScanTokens input
                       (Right resVal) -> return resVal
 
 evalJS :: String -> IO ()
-evalJS input = do let parsed = JS.parse input "<stdio>"
+evalJS input = do parsed <- parseJS input
                   pPrint parsed

@@ -2,9 +2,6 @@ module JS.Environment where
 
 import Data.Map (Map)
 import qualified Data.Map as M
-
-import Control.Monad.State.Lazy
-import Control.Monad.Except ( ExceptT )
 import Data.Maybe
 
 import qualified JS.Value as V
@@ -21,10 +18,9 @@ emptyEnvironment = Environment []
 initialEnvironment :: [String] -> Environment 
 initialEnvironment args = trace ("args: " ++ show args) $
   pushBindingLayer 
-    [ ("console", V.Object (M.fromList [("log", V.Function V.ConsoleLog)]))
-    , ("require", V.Function V.Require)
-    , ("process", V.Object (M.fromList 
-                  [("argv", V.arrayFromListWith  V.Str ("hjs" : args))]))
+    [ ("console", V.objectFromList [("log", V.consoleLog)])
+    , ("require", V.require)
+    , ("process", V.objectFromList [("argv", V.arrayFromListWith V.Str ("hjs" : args))])
     ] emptyEnvironment
 
 pushBindingLayer :: [(String, V.Value)] -> Environment -> Environment

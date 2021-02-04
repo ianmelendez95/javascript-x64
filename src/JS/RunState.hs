@@ -2,7 +2,6 @@ module JS.RunState where
 
 import Control.Monad.State.Lazy ( StateT )
 import Control.Monad.Except ( ExceptT )
-import Data.Maybe
 
 import qualified JS.Environment as Env
 
@@ -21,5 +20,6 @@ instance Show JSError where
   show (AccessError msg) = "AccessError: " ++ msg
   show (UndefinedVarError msg) = "UndefinedVarError: " ++ msg
   show (TypeError msg) = "TypeError: " ++ msg
+  show (ReferenceError msg) = "ReferenceError: " ++ msg
   show (ENOENT msg) = "ENOENT: " ++ msg
   show (RawError msg) = msg

@@ -22,7 +22,7 @@ tokens :-
   \]                                    { \_ -> T.RBrack              }
   [0-9]+                                { \num -> T.IntLit (read num) }
   [0-9]+(\.[0-9]+)?([eE][\+\-]?[0-9]+)? { \num -> T.NumLit (read num) }
-  [a-zA-Z][a-zA-Z0-9]*                  { \id  -> T.Identifier id     }
+  [a-zA-Z][a-zA-Z0-9]*                  { \ident  -> T.Identifier ident }
   \" [^\"]* \"                          { \str -> T.mkStringLit str   }
   \' [^\']* \'                          { \str -> T.mkStringLit str   }
 

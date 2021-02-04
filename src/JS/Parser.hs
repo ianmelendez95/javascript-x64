@@ -49,8 +49,7 @@ operatorTable =
     binary :: String -> (Expr -> Expr -> Expr) -> Operator Parser Expr
     binary  name f = InfixL  (f <$ symbol name)
 
-    prefix, postfix :: String -> (Expr -> Expr) -> Operator Parser Expr
-    prefix  name f = Prefix  (f <$ symbol name)
+    postfix :: String -> (Expr -> Expr) -> Operator Parser Expr
     postfix name f = Postfix (f <$ symbol name)
 
 forLoop :: Parser Expr

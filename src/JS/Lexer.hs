@@ -4,7 +4,6 @@ module JS.Lexer where
 import Text.Megaparsec hiding (ParseError, Token, token)
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
-import Control.Monad.Combinators.Expr
 import Data.Void
 import Data.Char
 import Data.Functor

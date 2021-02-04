@@ -2,10 +2,7 @@ module JS.Eval where
 
 import Control.Monad.State.Lazy
 import Control.Monad.Except
-import Control.Monad
 import Text.Read hiding (lift)
-import Data.Maybe
-import Data.List (intersperse)
 
 import JS.RunState
 import qualified JS.Value as V
@@ -18,7 +15,7 @@ evalProgram (S.Program _ _ es)
   = foldr ((>>) . evalExpressionStatement) (pure V.Undefined) es
 
 evalExpressionStatement :: S.ExpressionStatement -> RunState V.Value
-evalExpressionStatement (S.ExpressionStatement _ exp) = evalExpression exp
+evalExpressionStatement (S.ExpressionStatement _ expr) = evalExpression expr
 
 evalExpression :: S.Expression -> RunState V.Value
 evalExpression (S.Identifier _ ident) = lookupIdentifier ident
@@ -31,8 +28,8 @@ evalExpression (S.CallExpression _ callee arguments)
   = evalCallExpression callee arguments
 
 evalIdentifierMemberExpression :: S.Expression -> String -> RunState V.Value
-evalIdentifierMemberExpression exp property 
-  = do object <- evalExpression exp
+evalIdentifierMemberExpression expr property 
+  = do object <- evalExpression expr
        pure $ V.memberAccess object property
 
 evalComputedMemberExpression :: S.Expression -> S.Expression -> RunState V.Value
@@ -45,7 +42,7 @@ evalCallExpression :: S.Expression -> [S.Expression] -> RunState V.Value
 evalCallExpression calleeE argumentEs = 
   do callee <- evalExpression calleeE
      case callee of 
-       (V.Function func) -> call func =<< mapM evalExpression argumentEs 
+       (V.Function _ func) -> call func =<< mapM evalExpression argumentEs 
        _ -> throwError $ TypeError $ S.replShow calleeE ++ " is not a function"
                         
 evalLiteral :: S.Literal -> RunState V.Value
@@ -105,14 +102,14 @@ call V.ConsoleLog args = do liftIO . putStrLn . unwords $ map show args
                             pure V.Undefined
 call V.Require args = R.require args
 call V.ReadFileSync args = readFileSync args
-call V.Func {} args = error "function impl"
+call V.Func {} _ = error "function impl"
 
 -------------
 -- Var Ops --
 -------------
 
 lookupIdentifier :: S.Identifier -> RunState V.Value
-lookupIdentifier ident@(S.IdentifierName _ name) 
+lookupIdentifier (S.IdentifierName _ name) 
   = do res <- R.lookupVar name
        case res of 
          V.Undefined -> throwError $ ReferenceError $ name ++ " is not defined"
@@ -133,18 +130,20 @@ add x y = V.Str $ show x ++ show y
 
 sub :: V.Value -> V.Value -> V.Value
 sub (V.Num x) (V.Num y) = V.Num (x - y)
-sub x y = V.NaN
+sub _ _ = V.NaN
 
 truthy :: V.Value -> Bool
-truthy V.NaN        = False
-truthy V.Undefined  = False
-truthy V.Null       = False
-truthy (V.Num x)    = x /= 0
-truthy (V.Bl b)     = b
-truthy (V.Str str)  = not $ null str
-truthy (V.Object _) = True
-truthy (V.Array _)  = True
+truthy V.NaN         = False
+truthy V.Undefined   = False
+truthy V.Null        = False
+truthy (V.Num x)     = x /= 0
+truthy (V.Bl b)      = b
+truthy (V.Str str)   = not $ null str
+truthy V.Object {}   = True
+truthy V.Array {}    = True
+truthy V.Function {} = True
 
+-- TODO consider conversion of Double to NaN
 convertToNum :: V.Value -> Maybe Double 
 convertToNum (V.Str str) = readMaybe str
 convertToNum (V.Num num) = Just num

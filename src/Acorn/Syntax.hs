@@ -8,7 +8,7 @@ module Acorn.Syntax
   , Expression (..)
   , Identifier (..)
   , Literal (..)
-  , Pos (..)
+  , Pos
   , HasPos (pos)
   , ReplShow (replShow)
   ) where 
@@ -60,8 +60,8 @@ instance ReplShow ExpressionStatement where
   replShow (ExpressionStatement _ e) = replShow e
 instance ReplShow Expression where 
   replShow (Identifier _ ident) = replShow ident
-  replShow (ComputedMemberExpression _ object property) = replShow object ++ "[" ++ replShow property ++ "]"
-  replShow (IdentifierMemberExpression _ object identifier) = replShow object ++ "." ++ replShow identifier
+  replShow (ComputedMemberExpression _ obj property) = replShow obj ++ "[" ++ replShow property ++ "]"
+  replShow (IdentifierMemberExpression _ obj ident) = replShow obj ++ "." ++ replShow ident
   replShow (CallExpression _ callee _) = replShow callee ++ "(...)"
   replShow (Literal _ lit) = replShow lit
 instance ReplShow Identifier where 
@@ -102,6 +102,7 @@ instance FromJSON AcornOutput where
               case tipe of 
                 (String "Error") -> OutputError <$> parseJSON value
                 (String "Program") -> OutputResult <$> parseJSON value
+                _ -> error "Expecting acorn output types: (Error | Program)"
     ) 
     value
 
