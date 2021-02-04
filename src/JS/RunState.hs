@@ -12,7 +12,9 @@ data JSError = SyntaxError String
              | AccessError String
              | UndefinedVarError String
              | TypeError String
+             | ReferenceError String
              | ENOENT String
+             | RawError String
 
 instance Show JSError where 
   show (SyntaxError msg) = "SyntaxError: " ++ msg
@@ -20,3 +22,4 @@ instance Show JSError where
   show (UndefinedVarError msg) = "UndefinedVarError: " ++ msg
   show (TypeError msg) = "TypeError: " ++ msg
   show (ENOENT msg) = "ENOENT: " ++ msg
+  show (RawError msg) = msg

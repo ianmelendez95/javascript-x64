@@ -11,7 +11,7 @@ import qualified JS.Value as V
 import JS.RunState
 
 fsModule :: V.Value
-fsModule = V.Object . M.fromList $ [ ("readFileSync", V.ReadFileSync ) ]
+fsModule = V.Object . M.fromList $ [ ("readFileSync", V.Function V.ReadFileSync ) ]
 
 -- readFileSync
 

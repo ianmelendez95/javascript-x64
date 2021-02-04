@@ -10,9 +10,9 @@ import Data.Aeson (Value (..), eitherDecode)
 import qualified Data.ByteString.Lazy as B
 import Data.Either
 
-import Acorn.Output
+import Acorn.Syntax
 
-invokeAcornClientOutput :: String -> IO Output 
+invokeAcornClientOutput :: String -> IO AcornOutput 
 invokeAcornClientOutput js_source = either error id . eitherDecode <$> invokeAcornClientRaw js_source
 
 invokeAcornClientJson :: String -> IO Value

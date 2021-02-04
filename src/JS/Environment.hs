@@ -21,8 +21,8 @@ emptyEnvironment = Environment []
 initialEnvironment :: [String] -> Environment 
 initialEnvironment args = trace ("args: " ++ show args) $
   pushBindingLayer 
-    [ ("console", V.Object (M.fromList [("log", V.ConsoleLog)]))
-    , ("require", V.Require)
+    [ ("console", V.Object (M.fromList [("log", V.Function V.ConsoleLog)]))
+    , ("require", V.Function V.Require)
     , ("process", V.Object (M.fromList 
                   [("argv", V.arrayFromListWith  V.Str ("hjs" : args))]))
     ] emptyEnvironment

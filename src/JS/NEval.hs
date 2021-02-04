@@ -8,6 +8,7 @@ import Data.Maybe
 import qualified Data.Map as M
 
 import JS.RunState
+    ( JSError(AccessError, UndefinedVarError), RunState )
 import qualified JS.Value as V
 import qualified JS.Runtime as R
 import qualified JS.Exp as E
@@ -26,9 +27,9 @@ eval (E.Var var) = R.lookupVar var
 eval (E.VarAccess var1 var2) = varAccess var1 var2
 eval (E.ArrAccess var index) = arrAccess var index
 eval (E.Assign lhs rhs) = assign lhs rhs
-eval (E.Call fVar args) = do f <- eval fVar
-                             as <- mapM eval args
-                             call f as
+-- eval (E.Call fVar args) = do f <- eval fVar
+--                              as <- mapM eval args
+--                              call f as
 
 ---------------
 -- Value Ops --
@@ -42,19 +43,19 @@ assign (E.Var name) rhs = do value <- eval rhs
 
 ---- call
 
-call :: V.Value -> [V.Value] -> RunState V.Value
--- primitives
-call V.ConsoleLog args = do let output = unwords $ map show args
-                            liftIO $ putStrLn output
-                            return V.Undefined
-call V.Require args = case args of 
-                        [V.Str "fs"] -> return fsModule
-call V.ReadFileSync args = readFileSync args
+-- call :: V.Value -> [V.Value] -> RunState V.Value
+-- -- primitives
+-- call V.ConsoleLog args = do let output = unwords $ map show args
+--                             liftIO $ putStrLn output
+--                             return V.Undefined
+-- call V.Require args = case args of 
+--                         [V.Str "fs"] -> return fsModule
+-- call V.ReadFileSync args = readFileSync args
 
 -- compound
-call (V.Function name params body) args = do R.newEnvironment (zip params (args ++ repeat V.Undefined)) 
-                                             eval body
-call val args = throwError $ TypeError ("not a function: " ++ show val)
+-- call (V.Function name params body) args = do R.newEnvironment (zip params (args ++ repeat V.Undefined)) 
+--                                              eval body
+-- call val args = throwError $ TypeError ("not a function: " ++ show val)
 
 ---- value access
 
